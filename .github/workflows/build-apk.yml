@@ -37,14 +37,119 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Build debug APK
+      - name: Pasang ikon launcher
+        run: |
+          python3 -m pip install pillow --break-system-packages
+          python3 - << 'EOF'
+          import os, glob, math
+          from PIL import Image, ImageDraw, ImageFilter
+
+
+          def make_icon(size=1024):
+              S = 4096
+              # latar gradasi navy gelap ke ungu tua
+              bg = Image.new("RGB", (S, S))
+              px = bg.load()
+              for y in range(S):
+                  for x in range(0, S, 8):
+                      d = math.hypot(x - S / 2, y - S / 2) / (S * 0.72)
+                      d = min(d, 1)
+                      c = (int(38 - 26 * d), int(30 - 20 * d), int(86 - 56 * d))
+                      for k in range(8):
+                          px[x + k, y] = c
+              img = bg.convert("RGBA")
+
+              cx = cy = S // 2
+              gold = (255, 210, 122, 255)
+              violet = (143, 129, 255, 255)
+
+              # lapisan cahaya (glow)
+              glow = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+              g = ImageDraw.Draw(glow)
+              R = 1280
+              g.ellipse((cx - R, cy - R, cx + R, cy + R), outline=violet, width=150)
+              glow = glow.filter(ImageFilter.GaussianBlur(120))
+              img = Image.alpha_composite(img, glow)
+
+              wheel = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+              d = ImageDraw.Draw(wheel)
+              ring_o, ring_w = 1300, 150
+              d.ellipse((cx - ring_o, cy - ring_o, cx + ring_o, cy + ring_o), outline=gold, width=ring_w)
+              ring_i = ring_o - ring_w - 70
+              d.ellipse((cx - ring_i, cy - ring_i, cx + ring_i, cy + ring_i), outline=violet, width=36)
+
+              hub = 300
+              for i in range(8):
+                  a = math.radians(i * 45 - 90)
+                  x0, y0 = cx + math.cos(a) * hub * 0.6, cy + math.sin(a) * hub * 0.6
+                  x1, y1 = cx + math.cos(a) * (ring_o - ring_w + 20), cy + math.sin(a) * (ring_o - ring_w + 20)
+                  d.line((x0, y0, x1, y1), fill=gold, width=110)
+                  # gagang bulat di ujung luar
+                  kx, ky = cx + math.cos(a) * (ring_o + 150), cy + math.sin(a) * (ring_o + 150)
+                  d.ellipse((kx - 85, ky - 85, kx + 85, ky + 85), fill=gold)
+                  # titik ungu di tengah tiap jari-jari
+                  mx, my = cx + math.cos(a) * 760, cy + math.sin(a) * 760
+                  d.ellipse((mx - 32, my - 32, mx + 32, my + 32), fill=(21, 19, 47, 255))
+
+              d.ellipse((cx - hub, cy - hub, cx + hub, cy + hub), fill=gold)
+              d.ellipse((cx - hub + 90, cy - hub + 90, cx + hub - 90, cy + hub - 90), fill=(21, 19, 47, 255))
+              d.ellipse((cx - 85, cy - 85, cx + 85, cy + 85), fill=violet)
+
+              img = Image.alpha_composite(img, wheel)
+              return img.convert("RGB").resize((size, size), Image.LANCZOS)
+
+          src = make_icon(512)
+          res = "android/app/src/main/res"
+          sizes = {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}
+
+          for f in glob.glob(res + "/mipmap-anydpi-v26/ic_launcher*.xml"):
+              os.remove(f)
+
+          for name, px in sizes.items():
+              d = f"{res}/mipmap-{name}"
+              os.makedirs(d, exist_ok=True)
+              img = src.resize((px, px), Image.LANCZOS).convert("RGBA")
+              img.save(f"{d}/ic_launcher.png")
+              img.save(f"{d}/ic_launcher_foreground.png")
+              mask = Image.new("L", (px * 4, px * 4), 0)
+              ImageDraw.Draw(mask).ellipse((0, 0, px * 4 - 1, px * 4 - 1), fill=255)
+              mask = mask.resize((px, px), Image.LANCZOS)
+              r = img.copy()
+              r.putalpha(mask)
+              r.save(f"{d}/ic_launcher_round.png")
+          print("ikon selesai")
+          EOF
+
+      - name: Naikkan versi otomatis
+        run: |
+          sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/" android/app/build.gradle
+          sed -i "s/versionName \"1.0\"/versionName \"1.0.${{ github.run_number }}\"/" android/app/build.gradle
+          grep -n "version" android/app/build.gradle
+
+      - name: Build release APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
-      - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk Mahoraga.apk
+      - name: Tanda tangani APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "::error::Secret KEYSTORE_BASE64 dan KEYSTORE_PASSWORD belum diisi"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | tr -d '\n\r ' | base64 -d > release.keystore
+          BT="$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)"
+          UNSIGNED=$(find android/app/build/outputs/apk/release -name '*.apk' | head -1)
+          "$BT/zipalign" -p -f 4 "$UNSIGNED" aligned.apk
+          "$BT/apksigner" sign --ks release.keystore --ks-key-alias mahoraga \
+            --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD \
+            --out Mahoraga.apk aligned.apk
+          "$BT/apksigner" verify --print-certs Mahoraga.apk
+          rm -f release.keystore aligned.apk
 
       - name: Publish to Releases
         env:
@@ -52,5 +157,5 @@ jobs:
         run: |
           gh release create "v1.0.${{ github.run_number }}" Mahoraga.apk \
             --title "Mahoraga build ${{ github.run_number }}" \
-            --notes "Debug APK otomatis dari commit ${{ github.sha }}"
+            --notes "APK rilis bertanda tangan otomatis dari commit ${{ github.sha }}"
             
