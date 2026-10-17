@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +33,7 @@ jobs:
 
       - name: Setup Capacitor Android
         run: |
-          npx cap init CuanMinggu com.MahorgaCore.Rija --web-dir=dist
+          npx cap init Mahoraga com.MahorgaCore.Rija --web-dir=dist
           npx cap add android
           npx cap sync android
 
@@ -40,8 +43,14 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: CuanMinggu-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk Mahoraga.apk
+
+      - name: Publish to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" Mahoraga.apk \
+            --title "Mahoraga build ${{ github.run_number }}" \
+            --notes "Debug APK otomatis dari commit ${{ github.sha }}"
+            
