@@ -1,0 +1,6 @@
+{
+  "name": "CuanMinggu - Finansial Mingguan",
+  "description": "Aplikasi pencatatan keuangan mingguan mobile-first dengan pelacakan target, analisis profit, dan progres 5 aspek finansial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

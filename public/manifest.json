@@ -1,0 +1,46 @@
+{
+  "id": "com.MahorgaCore.Rija",
+  "name": "Core Mahoraga - Finansial Mingguan",
+  "short_name": "CoreMahoraga",
+  "package_name": "com.MahorgaCore.Rija",
+  "description": "Aplikasi Core Mahoraga: pencatatan keuangan mingguan mobile-first dengan pelacakan target dan 5 aspek finansial.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#15132f",
+  "theme_color": "#15132f",
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.MahorgaCore.Rija"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
