@@ -1,8 +1,8 @@
 # Core Mahoraga - Aplikasi Pencatatan Keuangan
 
-Aplikasi web Progressive Web App (PWA) Core Mahoraga: pencatatan keuangan mingguan mobile-first dengan format Rupiah (`Rp1.000.000`), pelacakan 5 pilar finansial, latar gradasi ungu-navy bergaya kartu kaca (*frosted glass*), penyimpanan lokal aman (IndexedDB + LocalStorage), dan dukungan offline penuh.
+Aplikasi Core Mahoraga: pencatatan keuangan mingguan mobile-first dengan format Rupiah (`Rp1.000.000`), pelacakan 5 pilar finansial, latar gradasi ungu-navy bergaya kartu kaca (*frosted glass*), penyimpanan lokal aman dan dukungan offline penuh.
 
----
+
 
 ## 📱 Fitur Utama & Alur Aplikasi
 
