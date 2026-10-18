@@ -12,7 +12,7 @@
 
 ## ✨ Tentang
 
-Aplikasi pencatatan keuangan **mobile-first** berformat Rupiah (`Rp1.000.000`), dengan pelacakan **5 pilar finansial**, tampilan ungu-navy bergaya kaca (*frosted glass*), penyimpanan lokal aman, dan dukungan **offline penuh**.
+Aplikasi pencatatan keuangan **mobile-first** berformat Rupiah (`Rp1.000.000`), dengan pelacakan **8 pilar finansial**, tampilan ungu-navy bergaya kaca (*frosted glass*), penyimpanan lokal aman, dan dukungan **offline penuh**.
 
 ## 📊 5 Pilar Finansial
 
