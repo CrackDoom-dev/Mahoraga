@@ -4,39 +4,7 @@
 
 <br/>
 
-
-
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-
-
-
-
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-
-
-
-
-![Tailwind](https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-
-
-
-
-![Capacitor](https://img.shields.io/badge/Capacitor-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)
-
-
-
-
-![PWA](https://img.shields.io/badge/PWA-Offline-8F81FF?style=for-the-badge)
-
-
-
-<br/>
-
-[
-
-![Download APK](https://img.shields.io/badge/⬇_Download-APK-3FC9B0?style=for-the-badge&logo=android&logoColor=white)
-
-](https://github.com/CrackDoom-dev/Mahoraga/releases/latest)
+<a href="https://github.com/CrackDoom-dev/Mahoraga/releases/latest"><img src="https://img.shields.io/badge/Unduh-APK-3FC9B0?style=for-the-badge&logo=android&logoColor=white" alt="Unduh APK" /></a>
 
 </div>
 
