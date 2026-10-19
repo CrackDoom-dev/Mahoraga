@@ -9,17 +9,23 @@
   --card-blur: 12px;
   --card-bg-opacity: 0.07;
   --overlay-opacity: 0.45;
+  --wheel-track: rgba(255, 255, 255, 0.08);
+  --wheel-dot: rgba(255, 255, 255, 0.25);
+  color-scheme: dark;
 }
 
 [data-theme="light"] {
-  --bg-gradient-start: #ebe9fc;
-  --bg-gradient-mid: #e2e0f8;
-  --bg-gradient-end: #d6d3f3;
-  --accent-purple: #6a56e8;
+  --bg-gradient-start: #f8f7fd;
+  --bg-gradient-mid: #eeedfb;
+  --bg-gradient-end: #e4e2f8;
+  --accent-purple: #6366f1;
   --accent-purple-light: #7c6cf5;
-  --card-blur: 12px;
-  --card-bg-opacity: 0.75;
-  --overlay-opacity: 0.1;
+  --card-blur: 16px;
+  --card-bg-opacity: 0.78;
+  --overlay-opacity: 0.15;
+  --wheel-track: rgba(99, 102, 241, 0.14);
+  --wheel-dot: rgba(99, 102, 241, 0.35);
+  color-scheme: light;
 }
 
 body {
@@ -61,7 +67,6 @@ body {
   box-shadow: 0 0 15px rgba(124, 108, 245, 0.35), inset 0 0 15px rgba(124, 108, 245, 0.15);
 }
 
-/* Glassmorphism utility */
 .glass-card {
   background-color: rgba(255, 255, 255, var(--card-bg-opacity, 0.07));
   backdrop-filter: blur(var(--card-blur, 12px));
@@ -84,15 +89,122 @@ body {
   background-color: rgba(255, 255, 255, 0.12);
 }
 
-/* Light mode overrides */
-[data-theme="light"] .glass-card,
-[data-theme="light"] .glass-card-interactive {
-  background-color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(124, 108, 245, 0.15);
-  box-shadow: 0 8px 24px -4px rgba(100, 90, 180, 0.08);
+[data-theme="light"] {
+  color: #0f172a;
 }
 
-/* Hide scrollbar for clean app experience */
+[data-theme="light"] body {
+  background-color: var(--bg-gradient-end);
+  color: #0f172a;
+}
+
+[data-theme="light"] .glass-card {
+  background-color: rgba(255, 255, 255, 0.78) !important;
+  backdrop-filter: blur(var(--card-blur, 16px)) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(var(--card-blur, 16px)) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 10px 30px -4px rgba(124, 108, 245, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04) !important;
+}
+
+[data-theme="light"] .glass-card-interactive {
+  background-color: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(var(--card-blur, 16px)) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(var(--card-blur, 16px)) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 16px -2px rgba(124, 108, 245, 0.09) !important;
+}
+
+[data-theme="light"] .glass-card-interactive:active {
+  transform: scale(0.98);
+  background-color: rgba(245, 243, 255, 0.95) !important;
+}
+
+[data-theme="light"] .text-\[\#f2f0ff\] {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-\[\#c4b5fd\] {
+  color: #4338ca !important;
+}
+
+[data-theme="light"] .text-\[\#a7a3c9\] {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-gradient-purple {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .bg-white\/5,
+[data-theme="light"] .bg-white\/\[0\.04\],
+[data-theme="light"] .bg-white\/\[0\.02\] {
+  background-color: rgba(124, 108, 245, 0.05) !important;
+}
+
+[data-theme="light"] .bg-white\/10 {
+  background-color: rgba(124, 108, 245, 0.08) !important;
+}
+
+[data-theme="light"] .bg-white\/\[0\.06\] {
+  background-color: rgba(124, 108, 245, 0.06) !important;
+}
+
+[data-theme="light"] .border-white\/5,
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/15,
+[data-theme="light"] .border-white\/20 {
+  border-color: rgba(124, 108, 245, 0.15) !important;
+}
+
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(124, 108, 245, 0.22) !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] nav[aria-label="Navigasi Bawah"] {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(124, 108, 245, 0.22) !important;
+  box-shadow: 0 10px 30px -5px rgba(100, 90, 180, 0.18), 0 4px 12px -2px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="light"] nav[aria-label="Navigasi Bawah"] button {
+  color: #64748b !important;
+}
+
+[data-theme="light"] nav[aria-label="Navigasi Bawah"] button:hover {
+  color: #312e81 !important;
+}
+
+[data-theme="light"] nav[aria-label="Navigasi Bawah"] button[aria-current="page"] {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .bg-\[\#15132f\]\/95,
+[data-theme="light"] .bg-\[\#0e0d22\]\/95 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(124, 108, 245, 0.2) !important;
+  box-shadow: 0 16px 40px rgba(100, 90, 180, 0.18) !important;
+}
+
+[data-theme="light"] .wheel-track {
+  stroke: rgba(124, 108, 245, 0.14) !important;
+}
+
+[data-theme="light"] .wheel-pillar-dot {
+  fill: rgba(124, 108, 245, 0.35) !important;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -101,7 +213,6 @@ body {
   scrollbar-width: none;
 }
 
-/* Hardware accelerated smooth rotations for moving rank borders */
 @keyframes spinSmooth {
   0% {
     transform: rotate(0deg) translateZ(0);
@@ -169,7 +280,6 @@ body {
   animation: rainbowShift 10s linear infinite;
 }
 
-/* Conic gradients for rotating animated rank borders */
 .conic-silver {
   background: conic-gradient(from 0deg, #94a3b8, #cbd5e1, #ffffff, #64748b, #94a3b8);
 }
@@ -202,7 +312,36 @@ body {
   background: conic-gradient(from 0deg, #ff007f, #7928ca, #0070f3, #00dfd8, #79ffe1, #f5a623, #ff007f);
 }
 
-/* Respect user's motion preferences */
+.tab-viewport {
+  contain: layout;
+}
+
+.tab-active {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 10;
+  transition: opacity 80ms ease-out;
+}
+
+.tab-inactive {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  content-visibility: hidden !important;
+  z-index: 0;
+}
+
+.tab-inactive,
+.tab-inactive * {
+  animation-play-state: paused !important;
+}
+
+.rank-avatar-paused,
+.rank-avatar-paused * {
+  animation-play-state: paused !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

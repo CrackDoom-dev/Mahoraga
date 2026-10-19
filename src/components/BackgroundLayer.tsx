@@ -7,60 +7,96 @@ interface BackgroundLayerProps {
   reloadTrigger: number;
 }
 
-export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
+let cachedBlobUrl: string | null = null;
+let cachedBlobType: 'image' | 'video' | null = null;
+let cachedBlobTimestamp = 0;
+
+export const BackgroundLayer: React.FC<BackgroundLayerProps> = React.memo(({
   settings,
   reloadTrigger,
 }) => {
-  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
-  const [mediaType, setMediaType] = useState<'image' | 'video' | null>(null);
+  const [mediaUrl, setMediaUrl] = useState<string | null>(cachedBlobUrl);
+  const [mediaType, setMediaType] = useState<'image' | 'video' | null>(cachedBlobType);
+  const [mediaReady, setMediaReady] = useState<boolean>(Boolean(cachedBlobUrl));
 
   useEffect(() => {
-    let activeUrl: string | null = null;
+    let isCurrent = true;
 
     async function loadBg() {
       if (!settings.hasCustomBg) {
-        if (mediaUrl) URL.revokeObjectURL(mediaUrl);
-        setMediaUrl(null);
-        setMediaType(null);
+        if (cachedBlobUrl) {
+          URL.revokeObjectURL(cachedBlobUrl);
+          cachedBlobUrl = null;
+          cachedBlobType = null;
+        }
+        if (isCurrent) {
+          setMediaUrl(null);
+          setMediaType(null);
+          setMediaReady(false);
+        }
+        return;
+      }
+
+      if (cachedBlobUrl && cachedBlobTimestamp === reloadTrigger) {
+        if (isCurrent) {
+          setMediaUrl(cachedBlobUrl);
+          setMediaType(cachedBlobType);
+          setMediaReady(true);
+        }
         return;
       }
 
       const res = await getBackgroundBlob();
+      if (!isCurrent) return;
+
       if (res && res.blob) {
-        activeUrl = URL.createObjectURL(res.blob);
-        setMediaUrl(activeUrl);
+        if (cachedBlobUrl) {
+          URL.revokeObjectURL(cachedBlobUrl);
+        }
+        cachedBlobUrl = URL.createObjectURL(res.blob);
+        cachedBlobType = res.type;
+        cachedBlobTimestamp = reloadTrigger;
+        setMediaUrl(cachedBlobUrl);
         setMediaType(res.type);
       } else {
         setMediaUrl(null);
         setMediaType(null);
+        setMediaReady(false);
       }
     }
 
     loadBg();
 
     return () => {
-      if (activeUrl) {
-        URL.revokeObjectURL(activeUrl);
-      }
+      isCurrent = false;
     };
   }, [settings.hasCustomBg, reloadTrigger]);
 
   const overlayOpacityDecimal = settings.overlayOpacity / 100;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* 1. Default Navy-Purple Ambient Gradient (always present beneath) */}
+    <div
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden h-[100dvh]"
+      style={{
+        transform: 'translateZ(0)',
+        willChange: 'transform',
+      }}
+    >
+
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 h-[100dvh]"
         style={{
           background:
             settings.themeMode === 'light'
-              ? 'linear-gradient(180deg, #edeafc 0%, #e1dff7 50%, #d5d1f0 100%)'
+              ? 'linear-gradient(180deg, #f8f7fd 0%, #eeedfb 50%, #e4e2f8 100%)'
               : 'linear-gradient(180deg, #1d1850 0%, #15132f 50%, #0e0d22 100%)',
         }}
       />
 
-      {/* 2. Custom Media (Image/GIF or Video) if provided */}
+      {settings.hasCustomBg && !mediaReady && (
+        <div className="absolute inset-0 w-full h-[100dvh] bg-white/[0.03] animate-pulse" />
+      )}
+
       {mediaUrl && mediaType === 'video' && (
         <video
           key={mediaUrl}
@@ -69,7 +105,10 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          onLoadedData={() => setMediaReady(true)}
+          className={`absolute inset-0 w-full h-[100dvh] object-cover object-center transition-opacity duration-300 ${            mediaReady ? 'opacity-100' : 'opacity-0'
+
+}`}
         />
       )}
 
@@ -78,22 +117,29 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
           key={mediaUrl}
           src={mediaUrl}
           alt="Custom Background"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          decoding="async"
+          loading="eager"
+          onLoad={() => setMediaReady(true)}
+          className={`absolute inset-0 w-full h-[100dvh] object-cover object-center transition-opacity duration-300 ${            mediaReady ? 'opacity-100' : 'opacity-0'
+
+}`}
         />
       )}
 
-      {/* 3. Dark Overlay Layer for Legibility */}
       <div
-        className="absolute inset-0 transition-opacity duration-300"
+        className="absolute inset-0 h-[100dvh] transition-opacity duration-300"
         style={{
           backgroundColor: '#0e0d22',
           opacity: mediaUrl ? overlayOpacityDecimal : 0,
         }}
       />
 
-      {/* 4. Subtle ambient glowing light orbs */}
       <div className="absolute top-1/4 -left-20 w-80 h-80 rounded-full bg-[#7c6cf5]/15 blur-[90px]" />
       <div className="absolute bottom-1/3 -right-20 w-80 h-80 rounded-full bg-[#3fc9b0]/10 blur-[90px]" />
     </div>
+
   );
-};
+});
+
+BackgroundLayer.displayName = 'BackgroundLayer';
+

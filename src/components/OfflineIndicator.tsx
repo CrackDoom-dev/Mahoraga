@@ -14,7 +14,11 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({ isOnline }) 
         <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
         <WifiOff className="w-3.5 h-3.5" />
         <span>Mode Offline — Semua data tersimpan lokal di HP</span>
+
       </div>
+
     </div>
+
   );
 };
+

@@ -3,8 +3,6 @@ import JSZip from 'jszip';
 export async function exportStaticBundle() {
   const zip = new JSZip();
 
-  // 1. README.md
-  // 1. README.md
   const readmeContent = `# Core Mahoraga - Aplikasi Pencatatan Keuangan Mingguan PWA
 
 Aplikasi Core Mahoraga: pencatatan keuangan mingguan mobile-first dengan format Rupiah (Rp1.000.000), pelacakan progres 5 aspek finansial, penyimpanan lokal aman (IndexedDB + LocalStorage), dan dukungan penuh PWA Offline.
@@ -58,7 +56,6 @@ Dibuat dengan cinta untuk kebebasan finansial Anda!`;
 
   zip.file('README.md', readmeContent);
 
-  // 2. Standalone HTML
   const standaloneHtml = `<!doctype html>
 <html lang="id">
 <head>
@@ -81,9 +78,7 @@ Dibuat dengan cinta untuk kebebasan finansial Anda!`;
 </html>`;
   zip.file('index.html', standaloneHtml);
 
-  // 3. Standalone CSS
-  const standaloneCss = `/* Core Mahoraga Standalone Style */
-:root {
+  const standaloneCss = `:root {
   --bg-1: #1d1850;
   --bg-2: #15132f;
   --bg-3: #0e0d22;
@@ -120,16 +115,13 @@ button {
 }`;
   zip.file('style.css', standaloneCss);
 
-  // 4. Standalone JS
-  const standaloneJs = `// Core Mahoraga Standalone Script
-console.log('Core Mahoraga loaded.');
+  const standaloneJs = `console.log('Core Mahoraga loaded.');
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(console.warn);
 }
 `;
   zip.file('app.js', standaloneJs);
 
-  // 5. Manifest
   const manifestData = {
     id: 'com.MahorgaCore.Rija',
     name: 'Core Mahoraga - Finansial Mingguan',
@@ -156,14 +148,12 @@ if ('serviceWorker' in navigator) {
   };
   zip.file('manifest.json', JSON.stringify(manifestData, null, 2));
 
-  // 6. Service worker
   const swContent = `const CACHE_NAME = 'coremahoraga-v1';
 const ASSETS = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS))));
 self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));`;
   zip.file('sw.js', swContent);
 
-  // Download zip to user browser
   const blob = await zip.generateAsync({ type: 'blob' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -174,3 +164,4 @@ self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
