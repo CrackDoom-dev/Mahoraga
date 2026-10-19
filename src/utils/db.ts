@@ -1,4 +1,5 @@
 import { Profile, FinanceTargets, WeeklyRecord, DailyRecord, AppSettings } from '../types';
+import { getRankTier } from './theme';
 
 const DB_NAME = 'cuanminggu_indexed_db';
 const DB_VERSION = 1;
@@ -101,11 +102,23 @@ export function loadProfile(): Profile | null {
   try {
     const raw = localStorage.getItem(KEYS.PROFILE);
     if (!raw) return null;
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+
+    // Normalize legacy rank (e.g. 'Perintis Finansial' from v1.0.2) to valid RankTier
+    const normalizedRank = getRankTier(parsed.rank);
+    parsed.rank = normalizedRank;
+
+    if (!parsed.lastSeenTier) {
+      parsed.lastSeenTier = normalizedRank;
+    }
+
+    return parsed;
   } catch {
     return null;
   }
 }
+
 
 export function saveProfile(profile: Profile): void {
   try {

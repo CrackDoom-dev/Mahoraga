@@ -93,30 +93,28 @@ export default function App() {
   }, [dailyRecords, records, profile?.rank, isDevUnlocked]);
 
   const [isCelebratingTier, setIsCelebratingTier] = useState(false);
+  const lastCheckedTierRef = useRef<string | null>(profile?.lastSeenTier || null);
 
   useEffect(() => {
     if (!profile) return;
     const currentHighest = xpMetrics.highestUnlockedTier;
-    const lastSeen = profile.lastSeenTier;
+    const lastSeen = profile.lastSeenTier || currentHighest;
 
-    if (!lastSeen) {
-
-      const updated = { ...profile, lastSeenTier: currentHighest };
-      saveProfile(updated);
-      setProfile(updated);
+    if (lastCheckedTierRef.current === null) {
+      lastCheckedTierRef.current = lastSeen;
       return;
     }
 
-    if (currentHighest !== lastSeen) {
+    if (currentHighest !== lastSeen && currentHighest !== lastCheckedTierRef.current) {
       const oldIdx = ORDERED_TIERS.indexOf(lastSeen);
       const newIdx = ORDERED_TIERS.indexOf(currentHighest);
       if (newIdx > oldIdx) {
-
         setIsCelebratingTier(true);
         const timer = setTimeout(() => {
           setIsCelebratingTier(false);
         }, 3500);
 
+        lastCheckedTierRef.current = currentHighest;
         const updated = { ...profile, lastSeenTier: currentHighest };
         saveProfile(updated);
         setProfile(updated);
@@ -124,7 +122,8 @@ export default function App() {
         return () => clearTimeout(timer);
       }
     }
-  }, [xpMetrics.highestUnlockedTier, profile]);
+  }, [xpMetrics.highestUnlockedTier]);
+
 
   const handleOnboardingComplete = (newProfile: Profile) => {
     saveProfile(newProfile);
@@ -248,72 +247,63 @@ export default function App() {
         )}
 
         <main className="flex-1 relative w-full overflow-hidden">
-          {profile && TAB_ORDER.map((tab) => {
-            const isActive = activeTab === tab;
+          {profile && (
+            <div
+              key={activeTab}
+              id={`tab-scroll-${activeTab}`}
+              role="tabpanel"
+              className="tab-viewport absolute inset-0 overflow-y-auto no-scrollbar pt-1 tab-active"
+            >
+              {activeTab === 'beranda' && (
+                <BerandaTab
+                  profile={profile}
+                  metrics={metrics}
+                  records={records}
+                  dailyRecords={dailyRecords}
+                  xpMetrics={xpMetrics}
+                  onNavigateToCatat={() => handleTabChange('catat')}
+                  onNavigateToRiwayat={() => handleTabChange('riwayat')}
+                />
+              )}
 
-            return (
-              <div
-                key={tab}
-                id={`tab-scroll-${tab
-}`}
-                role="tabpanel"
-                aria-hidden={!isActive}
-                className={`tab-viewport absolute inset-0 overflow-y-auto no-scrollbar pt-1 ${                  isActive ? 'tab-active' : 'tab-inactive'
+              {activeTab === 'catat' && (
+                <CatatTab
+                  records={records}
+                  dailyRecords={dailyRecords}
+                  onSaveWeek={handleSaveWeek}
+                  onSaveDaily={handleSaveDaily}
+                  onSuccessRedirect={() => handleTabChange('beranda')}
+                />
+              )}
 
-}`}
-              >
-                {tab === 'beranda' && (
-                  <BerandaTab
-                    profile={profile}
-                    metrics={metrics}
-                    records={records}
-                    dailyRecords={dailyRecords}
-                    xpMetrics={xpMetrics}
-                    onNavigateToCatat={() => handleTabChange('catat')}
-                    onNavigateToRiwayat={() => handleTabChange('riwayat')}
-                  />
-                )}
+              {activeTab === 'riwayat' && (
+                <RiwayatTab
+                  records={records}
+                  dailyRecords={dailyRecords}
+                  onDeleteLastRecord={handleDeleteLastRecord}
+                  onDeleteDailyRecord={handleDeleteDailyRecord}
+                  onNavigateToCatat={() => handleTabChange('catat')}
+                />
+              )}
 
-                {tab === 'catat' && (
-                  <CatatTab
-                    records={records}
-                    dailyRecords={dailyRecords}
-                    onSaveWeek={handleSaveWeek}
-                    onSaveDaily={handleSaveDaily}
-                    onSuccessRedirect={() => handleTabChange('beranda')}
-                  />
-                )}
-
-                {tab === 'riwayat' && (
-                  <RiwayatTab
-                    records={records}
-                    dailyRecords={dailyRecords}
-                    onDeleteLastRecord={handleDeleteLastRecord}
-                    onDeleteDailyRecord={handleDeleteDailyRecord}
-                    onNavigateToCatat={() => handleTabChange('catat')}
-                  />
-                )}
-
-                {tab === 'pengaturan' && (
-                  <PengaturanTab
-                    profile={profile}
-                    targets={targets}
-                    settings={settings}
-                    records={records}
-                    dailyRecords={dailyRecords}
-                    xpMetrics={xpMetrics}
-                    onUpdateProfile={handleUpdateProfile}
-                    onUpdateTargets={handleUpdateTargets}
-                    onUpdateSettings={handleUpdateSettings}
-                    onRestoreData={handleRestoreData}
-                    onResetAllData={handleResetAllData}
-                    onReloadCustomBg={() => setBgReloadTrigger((c) => c + 1)}
-                  />
-                )}
-              </div>
-
-            );
-          })}
+              {activeTab === 'pengaturan' && (
+                <PengaturanTab
+                  profile={profile}
+                  targets={targets}
+                  settings={settings}
+                  records={records}
+                  dailyRecords={dailyRecords}
+                  xpMetrics={xpMetrics}
+                  onUpdateProfile={handleUpdateProfile}
+                  onUpdateTargets={handleUpdateTargets}
+                  onUpdateSettings={handleUpdateSettings}
+                  onRestoreData={handleRestoreData}
+                  onResetAllData={handleResetAllData}
+                  onReloadCustomBg={() => setBgReloadTrigger((c) => c + 1)}
+                />
+              )}
+            </div>
+          )}
         </main>
 
         <BottomNavigation
