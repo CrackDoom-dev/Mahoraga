@@ -33,6 +33,34 @@ body {
   user-select: none;
 }
 
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #f2f0ff 0%, #c4b5fd 50%, #8f81ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #fffbeb 0%, #fde68a 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.neon-border-purple {
+  box-shadow: 0 0 15px rgba(124, 108, 245, 0.35), inset 0 0 15px rgba(124, 108, 245, 0.15);
+}
+
 /* Glassmorphism utility */
 .glass-card {
   background-color: rgba(255, 255, 255, var(--card-bg-opacity, 0.07));
@@ -73,14 +101,105 @@ body {
   scrollbar-width: none;
 }
 
-/* Pulse animation for ring drawings */
-@keyframes ringDraw {
-  from {
-    stroke-dashoffset: 283;
+/* Hardware accelerated smooth rotations for moving rank borders */
+@keyframes spinSmooth {
+  0% {
+    transform: rotate(0deg) translateZ(0);
   }
-  to {
-    stroke-dashoffset: 0;
+  100% {
+    transform: rotate(360deg) translateZ(0);
   }
+}
+
+@keyframes spinSmoothReverse {
+  0% {
+    transform: rotate(360deg) translateZ(0);
+  }
+  100% {
+    transform: rotate(0deg) translateZ(0);
+  }
+}
+
+@keyframes pulseGlowSoft {
+  0%, 100% {
+    opacity: 0.65;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px currentColor);
+  }
+}
+
+@keyframes rainbowShift {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.animate-spin-smooth {
+  animation: spinSmooth 20s linear infinite;
+  will-change: transform;
+}
+
+.animate-spin-smooth-fast {
+  animation: spinSmooth 14s linear infinite;
+  will-change: transform;
+}
+
+.animate-spin-smooth-slow {
+  animation: spinSmooth 28s linear infinite;
+  will-change: transform;
+}
+
+.animate-spin-reverse-smooth {
+  animation: spinSmoothReverse 18s linear infinite;
+  will-change: transform;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlowSoft 3s ease-in-out infinite;
+  will-change: opacity, filter;
+}
+
+.animate-rainbow {
+  animation: rainbowShift 10s linear infinite;
+}
+
+/* Conic gradients for rotating animated rank borders */
+.conic-silver {
+  background: conic-gradient(from 0deg, #94a3b8, #cbd5e1, #ffffff, #64748b, #94a3b8);
+}
+
+.conic-emerald {
+  background: conic-gradient(from 0deg, #10b981, #34d399, #6ee7b7, #059669, #10b981);
+}
+
+.conic-cyan {
+  background: conic-gradient(from 0deg, #06b6d4, #38bdf8, #67e8f9, #0284c7, #06b6d4);
+}
+
+.conic-amethyst {
+  background: conic-gradient(from 0deg, #8b5cf6, #c084fc, #e879f9, #6d28d9, #8b5cf6);
+}
+
+.conic-ruby {
+  background: conic-gradient(from 0deg, #f43f5e, #fb7185, #f59e0b, #e11d48, #f43f5e);
+}
+
+.conic-gold {
+  background: conic-gradient(from 0deg, #f59e0b, #fbbf24, #fef08a, #d97706, #f59e0b);
+}
+
+.conic-mahoraga {
+  background: conic-gradient(from 0deg, #7c6cf5, #ffb454, #ff7aa8, #3fc9b0, #7c6cf5);
+}
+
+.conic-divine {
+  background: conic-gradient(from 0deg, #ff007f, #7928ca, #0070f3, #00dfd8, #79ffe1, #f5a623, #ff007f);
 }
 
 /* Respect user's motion preferences */

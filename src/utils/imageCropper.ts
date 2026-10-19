@@ -85,3 +85,60 @@ export async function cropImageToPortrait(
     img.src = objectUrl;
   });
 }
+
+/**
+ * Utility to automatically crop and center an image to 1:1 square ratio
+ * perfectly sized for circular avatar frames with smooth anti-aliased edges.
+ * Returns base64 Data URL for instant rendering and storage.
+ */
+export async function cropImageToSquareDataUrl(
+  file: File,
+  size = 512
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        return reject(new Error('Canvas context not available'));
+      }
+
+      const minDim = Math.min(img.width, img.height);
+      const srcX = (img.width - minDim) / 2;
+      const srcY = (img.height - minDim) / 2;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      ctx.drawImage(
+        img,
+        srcX,
+        srcY,
+        minDim,
+        minDim,
+        0,
+        0,
+        size,
+        size
+      );
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      resolve(dataUrl);
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Failed to load image for cropping'));
+    };
+
+    img.src = objectUrl;
+  });
+}

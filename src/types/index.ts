@@ -1,3 +1,13 @@
+export type RankTier =
+  | 'F-Rank Pemula'
+  | 'E-Rank Pejuang'
+  | 'D-Rank Konsisten'
+  | 'C-Rank Terencana'
+  | 'B-Rank Finansial Stabil'
+  | 'A-Rank Mandiri Finansial'
+  | 'S-Rank Apex Mahoraga'
+  | 'Divine Mahoraga';
+
 export interface Profile {
   nama: string;
   targetTujuan: string;
@@ -8,7 +18,10 @@ export interface Profile {
   };
   avatar?: string;
   level?: number;
-  rank?: string;
+  rank?: RankTier | string;
+  customRank?: string;
+  isRankManual?: boolean;
+  lastSeenTier?: RankTier;
 }
 
 export interface FinanceTargets {
@@ -16,6 +29,16 @@ export interface FinanceTargets {
   kebutuhanPerMinggu: number; // default: 500000
   totalUtang: number;         // default: 0
   targetTabungan: number;     // default: 10000000
+}
+
+export interface DailyRecord {
+  id: string;
+  tanggal: string; // ISO string or YYYY-MM-DD
+  modal: number;
+  hasilAkhir: number;
+  profit: number; // hasilAkhir - modal
+  growPersen: number; // ((hasilAkhir / modal) - 1) * 100
+  createdAt: number;
 }
 
 export interface WeeklyRecord {
@@ -50,4 +73,6 @@ export interface ProgressMetrics {
   totalProfit: number;
   avgGrow: number;
   daysRemaining: number;
+  dailyCount: number;
+  weeklyCount: number;
 }

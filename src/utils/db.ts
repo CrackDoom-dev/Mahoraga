@@ -1,4 +1,4 @@
-import { Profile, FinanceTargets, WeeklyRecord, AppSettings } from '../types';
+import { Profile, FinanceTargets, WeeklyRecord, DailyRecord, AppSettings } from '../types';
 
 const DB_NAME = 'cuanminggu_indexed_db';
 const DB_VERSION = 1;
@@ -78,6 +78,7 @@ const KEYS = {
   PROFILE: 'cuanminggu_profil',
   TARGETS: 'cuanminggu_targets',
   RECORDS: 'cuanminggu_mingguan',
+  DAILY_RECORDS: 'cuanminggu_harian',
   SETTINGS: 'cuanminggu_settings',
 };
 
@@ -151,6 +152,25 @@ export function saveRecords(records: WeeklyRecord[]): void {
   }
 }
 
+export function loadDailyRecords(): DailyRecord[] {
+  try {
+    const raw = localStorage.getItem(KEYS.DAILY_RECORDS);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveDailyRecords(dailyRecords: DailyRecord[]): void {
+  try {
+    localStorage.setItem(KEYS.DAILY_RECORDS, JSON.stringify(dailyRecords));
+  } catch (e) {
+    console.error('Failed to save daily records', e);
+  }
+}
+
 export function loadSettings(): AppSettings {
   try {
     const raw = localStorage.getItem(KEYS.SETTINGS);
@@ -173,6 +193,7 @@ export function clearAllData(): void {
   localStorage.removeItem(KEYS.PROFILE);
   localStorage.removeItem(KEYS.TARGETS);
   localStorage.removeItem(KEYS.RECORDS);
+  localStorage.removeItem(KEYS.DAILY_RECORDS);
   localStorage.removeItem(KEYS.SETTINGS);
   deleteBackgroundBlob();
 }
