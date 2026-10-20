@@ -51,7 +51,6 @@ class ErrorBoundary extends Component<Props, State> {
         </div>
       );
     }
-
     return this.props.children;
   }
 }
@@ -61,4 +60,3 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </ErrorBoundary>
 );
-

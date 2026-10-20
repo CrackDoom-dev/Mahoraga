@@ -55,7 +55,7 @@ const RiwayatTabComponent: React.FC<RiwayatTabProps> = ({
   );
 
   return (
-    <div className="space-y-4 pb-24 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
+    <div className="space-y-4 pb-20 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
 
       <div className="glass-card p-5 rounded-[24px] border border-white/10 shadow-xl flex items-center justify-between">
         <div>

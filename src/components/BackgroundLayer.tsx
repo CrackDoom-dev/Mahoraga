@@ -76,15 +76,14 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = React.memo(({
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden h-[100dvh]"
+      className="fixed inset-0 w-full h-full min-h-[100dvh] pointer-events-none z-0 overflow-hidden"
       style={{
         transform: 'translateZ(0)',
         willChange: 'transform',
       }}
     >
-
       <div
-        className="absolute inset-0 h-[100dvh]"
+        className="absolute inset-0 w-full h-full min-h-[100dvh]"
         style={{
           background:
             settings.themeMode === 'light'
@@ -94,7 +93,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = React.memo(({
       />
 
       {settings.hasCustomBg && !mediaReady && (
-        <div className="absolute inset-0 w-full h-[100dvh] bg-white/[0.03] animate-pulse" />
+        <div className="absolute inset-0 w-full h-full min-h-[100dvh] bg-white/[0.03] animate-pulse" />
       )}
 
       {mediaUrl && mediaType === 'video' && (
@@ -106,9 +105,9 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = React.memo(({
           muted
           playsInline
           onLoadedData={() => setMediaReady(true)}
-          className={`absolute inset-0 w-full h-[100dvh] object-cover object-center transition-opacity duration-300 ${            mediaReady ? 'opacity-100' : 'opacity-0'
-
-}`}
+          className={`absolute inset-0 w-full h-full min-w-full min-h-[100dvh] object-cover object-center transition-opacity duration-300 ${
+            mediaReady ? 'opacity-100' : 'opacity-0'
+          }`}
         />
       )}
 
@@ -120,14 +119,14 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = React.memo(({
           decoding="async"
           loading="eager"
           onLoad={() => setMediaReady(true)}
-          className={`absolute inset-0 w-full h-[100dvh] object-cover object-center transition-opacity duration-300 ${            mediaReady ? 'opacity-100' : 'opacity-0'
-
-}`}
+          className={`absolute inset-0 w-full h-full min-w-full min-h-[100dvh] object-cover object-center transition-opacity duration-300 ${
+            mediaReady ? 'opacity-100' : 'opacity-0'
+          }`}
         />
       )}
 
       <div
-        className="absolute inset-0 h-[100dvh] transition-opacity duration-300"
+        className="absolute inset-0 w-full h-full min-h-[100dvh] transition-opacity duration-300"
         style={{
           backgroundColor: '#0e0d22',
           opacity: mediaUrl ? overlayOpacityDecimal : 0,
@@ -137,9 +136,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = React.memo(({
       <div className="absolute top-1/4 -left-20 w-80 h-80 rounded-full bg-[#7c6cf5]/15 blur-[90px]" />
       <div className="absolute bottom-1/3 -right-20 w-80 h-80 rounded-full bg-[#3fc9b0]/10 blur-[90px]" />
     </div>
-
   );
 });
 
 BackgroundLayer.displayName = 'BackgroundLayer';
-
