@@ -426,7 +426,7 @@ const PengaturanTabComponent: React.FC<PengaturanTabProps> = ({
   const badgeStyle = getRankBadgeColor(currentRank);
 
   return (
-    <div className="space-y-4 pb-28 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
+    <div className="space-y-4 pb-22 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
 
       {toastMessage && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-gradient-to-r from-[#7c6cf5] to-[#8f81ff] text-white text-xs font-semibold shadow-2xl flex items-center gap-2 animate-[fadeIn_0.2s]">

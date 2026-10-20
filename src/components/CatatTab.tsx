@@ -181,7 +181,7 @@ const CatatTabComponent: React.FC<CatatTabProps> = ({
   };
 
   return (
-    <div className="space-y-4 pb-24 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
+    <div className="space-y-4 pb-20 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
 
       <div className="p-1 rounded-2xl bg-[#15132f] border border-white/10 flex items-center shadow-lg">
         <button

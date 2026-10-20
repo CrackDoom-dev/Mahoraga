@@ -37,6 +37,54 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Aktifkan edge-to-edge (status bar transparan)
+        run: |
+          node -e '
+          const fs = require("fs");
+          const path = require("path");
+          function findMainActivity(dir) {
+            for (const f of fs.readdirSync(dir)) {
+              const full = path.join(dir, f);
+              if (fs.statSync(full).isDirectory()) {
+                const res = findMainActivity(full);
+                if (res) return res;
+              } else if (f === "MainActivity.java") {
+                return full;
+              }
+            }
+            return null;
+          }
+          const target = findMainActivity("android/app/src/main/java");
+          if (!target) throw new Error("MainActivity.java tidak ditemukan!");
+          const original = fs.readFileSync(target, "utf8");
+          const pkgMatch = original.match(/^package\s+[^;]+;/m);
+          const pkgLine = pkgMatch ? pkgMatch[0] : "package com.MahorgaCore.Rija;";
+          const code = `${pkgLine}\n\n` +
+            `import android.graphics.Color;\n` +
+            `import android.os.Bundle;\n` +
+            `import android.view.Window;\n` +
+            `import androidx.core.view.WindowCompat;\n` +
+            `import androidx.core.view.WindowInsetsControllerCompat;\n` +
+            `import com.getcapacitor.BridgeActivity;\n\n` +
+            `public class MainActivity extends BridgeActivity {\n` +
+            `    @Override\n` +
+            `    public void onCreate(Bundle savedInstanceState) {\n` +
+            `        super.onCreate(savedInstanceState);\n\n` +
+            `        Window window = getWindow();\n` +
+            `        WindowCompat.setDecorFitsSystemWindows(window, false);\n` +
+            `        window.setStatusBarColor(Color.TRANSPARENT);\n` +
+            `        window.setNavigationBarColor(Color.TRANSPARENT);\n\n` +
+            `        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window, window.getDecorView());\n` +
+            `        if (controller != null) {\n` +
+            `            controller.setAppearanceLightStatusBars(false);\n` +
+            `            controller.setAppearanceLightNavigationBars(false);\n` +
+            `        }\n` +
+            `    }\n` +
+            `}\n`;
+          fs.writeFileSync(target, code);
+          console.log("Berhasil mengaktifkan edge-to-edge pada " + target);
+          '
+
       - name: Pasang ikon launcher
         run: |
           python3 -m pip install pillow --break-system-packages

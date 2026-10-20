@@ -126,9 +126,8 @@ const BerandaTabComponent: React.FC<BerandaTabProps> = ({
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div className="space-y-4 pb-24 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
-
-      <div className="glass-card p-6 sm:p-7 rounded-[26px] border border-white/10 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center">
+    <div className="space-y-4 pb-20 px-4 pt-1 animate-[fadeIn_0.3s_ease-out]">
+      <div className="glass-card p-5 sm:p-6 rounded-[24px] border border-white/10 shadow-xl relative overflow-hidden flex flex-col items-center justify-center">
 
         <div
           className="absolute -top-16 -right-16 w-52 h-52 rounded-full blur-3xl pointer-events-none transition-colors duration-700"
